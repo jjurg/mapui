@@ -9,8 +9,8 @@ class MapManager {
     init() {
         this.map = new maplibregl.Map({
             container: this.mapId,
-            style: 'https://api.maptiler.com/maps/streets/style.json?key=YOUR_KEY', // We'll need to configure this
-            center: [-98.5795, 39.8283], // US center coordinates - adjust as needed
+            style: 'https://api.maptiler.com/maps/streets/style.json?key=YOUR_KEY',
+            center: [-98.5795, 39.8283],
             zoom: 4
         });
 
@@ -169,7 +169,61 @@ class MapManager {
     }
 
     changeBasemap(style) {
-        // This will be implemented to switch basemap styles
+        const styles = {
+            'osm': {
+                url: 'https://api.maptiler.com/maps/streets/style.json?key=YOUR_KEY'
+            },
+            'arcgis-streets': {
+                url: 'https://basemaps.arcgis.com/v1/arcgis/rest/services/World_Street_Map/VectorTileServer/resources/styles/root.json'
+            },
+            'arcgis-earth': {
+                url: 'https://basemaps.arcgis.com/v1/arcgis/rest/services/World_Imagery/VectorTileServer/resources/styles/root.json'
+            },
+            'stamen': {
+                url: 'https://tiles.stadiamaps.com/styles/stamen_terrain.json'
+            }
+        };
+
+        if (!styles[style]) {
+            console.error(`Unknown style: ${style}`);
+            return;
+        }
+
+        // Store current center and zoom
+        const center = this.map.getCenter();
+        const zoom = this.map.getZoom();
+
+        // Store current layer visibility states
+        const layerStates = {};
+        this.map.getStyle().layers.forEach(layer => {
+            if (layer.id.endsWith('-layer')) {
+                layerStates[layer.id] = this.map.getLayoutProperty(layer.id, 'visibility');
+            }
+        });
+
+        // Change the style
+        this.map.setStyle(styles[style].url);
+
+        // After the style loads, restore the GIS layers and their states
+        this.map.once('style.load', () => {
+            // Restore center and zoom
+            this.map.setCenter(center);
+            this.map.setZoom(zoom);
+
+            // Reload the GIS layers
+            this.loadInitialLayers().then(() => {
+                // Restore visibility states
+                Object.entries(layerStates).forEach(([layerId, visibility]) => {
+                    this.map.setLayoutProperty(layerId, 'visibility', visibility);
+                    
+                    // Update checkbox state in layer control
+                    const checkbox = document.getElementById(`toggle-${layerId.replace('-layer', '')}`);
+                    if (checkbox) {
+                        checkbox.checked = visibility === 'visible';
+                    }
+                });
+            });
+        });
     }
 }
 
