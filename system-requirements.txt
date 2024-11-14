@@ -1,0 +1,109 @@
+Requirements for the project:
+
+general
+
+This is an application to display geographical data on a map. 
+The data related to telecommunications, it displays cost, price and availability of the services.
+The data is global in nature.
+create a templating system that can be used to add map layouts in the future
+review if we can use an industry standard json template for this
+
+
+Files and Folders
+
+Create standard folder and file structure for a flask application
+
+Systems
+
+The backed data comes from an ARCGIS System
+We can use a MySQL database to offload the ARCGIS System
+The core of the App is Flask
+The mapping library is MapLibre
+Use Jinja2 for templating
+Use Bootstrap for styling
+Use FontAwesome for icons
+
+
+Visualization
+
+The user can select a country and see the data related to the country availability shapes.
+The user can select a city and see the data related to the city.
+The user can search for a customer dataset and load these locations
+The user can select a split screen and show two maps side by side.
+Each map can show different underlay maps or different layers.
+When zoomed or panned the map will update the underlay maps and keeps the 2 in sync.
+Use mouse over to show the details of the polygons and points.
+Ensure there is a natural way to show details of the polygons and points in case of overlapping polygons and points.
+when loading new data zoom the bounding box of the new data to the map
+have functionality to naviate through the site list with a next and previous button
+
+
+
+Shape Data
+
+The shape data covers the followwing layers
+- costing polygos
+- pricing polygons
+
+Formatting of the polygons can be by
+- installation cost and/or price
+- recurring cost and/or price
+- underlying supplier
+- max available speeds
+
+
+Additional Information
+
+The screen will need realestate to show
+- a table of available speeds and services, with their prices for a a given location
+- a section to display the polygon and site data source
+- when selecting a record in the data view there needs to be a way to naviate the map to the location
+
+
+Basemaps
+
+Use the following basemaps
+- Open Street Map
+- argis street map
+- arggis earth map
+- stammer street map
+
+ensure that we do no need a maplibre key
+
+
+Location Data
+
+Location data is used to show the customers location on the map.
+The location data is retrieved using an API based on a collection id or name
+The data can contain current pricing and price levels for this customer by location
+
+Formatting and Filteringof the location data can be by
+
+Price quotes
+price level
+Site Type
+Site Speed
+Site Service offered
+Geocode match level (e.g. point, street, postal code, city, )
+
+Formatting of point can consist of
+
+color
+edge color
+marker shape (circle, square, triangle)
+marker size
+marker color
+
+ Filtering
+
+ The user needs the ability to fitler the data based on the available columns
+ system needs to detect categorical and numeric data
+ for categorical data the user needs to be able to select the values to fitler on
+ for numerical data the user needs to be able to define the range to fitler on
+
+
+IMPORTANT
+
+Start with creating the basic structure of the application
+Create header functions not the implementation
+Structure is more important then the functionality at this moment
