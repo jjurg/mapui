@@ -1,6 +1,6 @@
 # routes/api_routes.py
 from flask import Blueprint, jsonify, request
-from models.geo_data import db, ShapeData, LocationData
+from app.models.geo_data import db, ShapeData, LocationData
 
 api_bp = Blueprint('api', __name__)
 
