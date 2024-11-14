@@ -1,0 +1,24 @@
+{% macro render_map(map_id='map', height='600px') %}
+<div id="{{ map_id }}" style="height: {{ height }};" class="map-container"></div>
+{% endmacro %}
+
+{% macro render_layer_control() %}
+<div class="layer-control">
+    <h3>Layers</h3>
+    <div class="layer-list">
+        <!-- Layer toggles will be dynamically populated -->
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_basemap_control() %}
+<div class="basemap-control">
+    <h3>Base Maps</h3>
+    <select id="basemap-selector">
+        <option value="osm">OpenStreetMap</option>
+        <option value="arcgis-streets">ArcGIS Streets</option>
+        <option value="arcgis-earth">ArcGIS Earth</option>
+        <option value="stamen">Stamen Streets</option>
+    </select>
+</div>
+{% endmacro %}

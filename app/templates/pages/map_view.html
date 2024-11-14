@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "components/map_component.html" import render_map, render_layer_control, render_basemap_control %}
+
+{% block title %}Map View{% endblock %}
+
+{% block styles %}
+<link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="map-page-container">
+    <div class="sidebar">
+        {{ render_layer_control() }}
+        {{ render_basemap_control() }}
+        <div class="data-table">
+            <!-- Data table will be dynamically populated -->
+        </div>
+    </div>
+    <div class="map-section">
+        {{ render_map() }}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}
