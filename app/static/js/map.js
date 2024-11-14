@@ -227,77 +227,87 @@ class MapManager {
     }
 }
 
+class MapManager {
+    constructor(mapId) {
+        this.map = null;
+        this.mapId = mapId;
+        this.layers = new Map();
+        this.init();
+    }
+
+    // ... [existing methods remain the same] ...
+
+    static setupSplitView() {
+        const mapA = new MapManager('mapA');
+        let mapB = null;
+        let isSplitView = false;
+
+        // Toggle split view button handler
+        document.getElementById('toggle-split-view').addEventListener('click', () => {
+            const singleView = document.querySelector('.map-wrapper.single');
+            const splitView = document.querySelector('.map-wrapper.split');
+            
+            if (!isSplitView) {
+                // Switch to split view
+                singleView.classList.remove('active');
+                singleView.classList.add('hidden');
+                splitView.classList.remove('hidden');
+                splitView.classList.add('active');
+                
+                // Initialize second map if not already done
+                if (!mapB) {
+                    mapB = new MapManager('mapB');
+                    MapManager.syncMaps(mapA, mapB);
+                }
+            } else {
+                // Switch to single view
+                splitView.classList.remove('active');
+                splitView.classList.add('hidden');
+                singleView.classList.remove('hidden');
+                singleView.classList.add('active');
+            }
+            
+            isSplitView = !isSplitView;
+            
+            // Trigger resize event to ensure maps render correctly
+            window.dispatchEvent(new Event('resize'));
+        });
+
+        // Setup individual basemap selectors
+        const setupBasemapSelector = (mapInstance, selectId) => {
+            const select = document.getElementById(selectId);
+            if (select) {
+                select.addEventListener('change', (e) => {
+                    mapInstance.changeBasemap(e.target.value);
+                });
+            }
+        };
+
+        setupBasemapSelector(mapA, 'mapA-basemap');
+        setupBasemapSelector(mapB, 'mapB-basemap');
+    }
+
+    static syncMaps(mapA, mapB) {
+        const syncMove = (sourceMap, targetMap) => {
+            targetMap.map.setCenter(sourceMap.map.getCenter());
+            targetMap.map.setZoom(sourceMap.map.getZoom());
+            targetMap.map.setBearing(sourceMap.map.getBearing());
+            targetMap.map.setPitch(sourceMap.map.getPitch());
+        };
+
+        // Sync map A to B
+        mapA.map.on('move', () => {
+            syncMove(mapA, mapB);
+        });
+
+        // Sync map B to A
+        mapB.map.on('move', () => {
+            syncMove(mapB, mapA);
+        });
+    }
+}
+
 // Initialize map when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     MapManager.setupSplitView();
 });
-
-// Add these static methods to the MapManager class
-static setupSplitView() {
-    const mapA = new MapManager('mapA');
-    let mapB = null;
-    let isSplitView = false;
-
-    // Toggle split view button handler
-    document.getElementById('toggle-split-view').addEventListener('click', () => {
-        const singleView = document.querySelector('.map-wrapper.single');
-        const splitView = document.querySelector('.map-wrapper.split');
-        
-        if (!isSplitView) {
-            // Switch to split view
-            singleView.classList.remove('active');
-            singleView.classList.add('hidden');
-            splitView.classList.remove('hidden');
-            splitView.classList.add('active');
-            
-            // Initialize second map if not already done
-            if (!mapB) {
-                mapB = new MapManager('mapB');
-                MapManager.syncMaps(mapA, mapB);
-            }
-        } else {
-            // Switch to single view
-            splitView.classList.remove('active');
-            splitView.classList.add('hidden');
-            singleView.classList.remove('hidden');
-            singleView.classList.add('active');
-        }
-        
-        isSplitView = !isSplitView;
-        
-        // Trigger resize event to ensure maps render correctly
-        window.dispatchEvent(new Event('resize'));
-    });
-
-    // Setup individual basemap selectors
-    const setupBasemapSelector = (mapInstance, selectId) => {
-        const select = document.getElementById(selectId);
-        if (select) {
-            select.addEventListener('change', (e) => {
-                mapInstance.changeBasemap(e.target.value);
-            });
-        }
-    };
-
-    setupBasemapSelector(mapA, 'mapA-basemap');
-    setupBasemapSelector(mapB, 'mapB-basemap');
-}
-
-static syncMaps(mapA, mapB) {
-    const syncMove = (sourceMap, targetMap) => {
-        targetMap.map.setCenter(sourceMap.map.getCenter());
-        targetMap.map.setZoom(sourceMap.map.getZoom());
-        targetMap.map.setBearing(sourceMap.map.getBearing());
-        targetMap.map.setPitch(sourceMap.map.getPitch());
-    };
-
-    // Sync map A to B
-    mapA.map.on('move', () => {
-        syncMove(mapA, mapB);
-    });
-
-    // Sync map B to A
-    mapB.map.on('move', () => {
-        syncMove(mapB, mapA);
-    });
-}
