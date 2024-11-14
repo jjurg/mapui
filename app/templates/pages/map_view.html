@@ -11,14 +11,37 @@
 {% block content %}
 <div class="map-page-container">
     <div class="sidebar">
+        <button id="toggle-split-view" class="control-button">Toggle Split View</button>
         {{ render_layer_control() }}
         {{ render_basemap_control() }}
         <div class="data-table">
             <!-- Data table will be dynamically populated -->
         </div>
     </div>
-    <div class="map-section">
-        {{ render_map() }}
+    <div class="map-section" id="map-container">
+        <div class="map-wrapper single active">
+            {{ render_map('mapA') }}
+        </div>
+        <div class="map-wrapper split hidden">
+            <div class="split-map">
+                <select class="basemap-select" id="mapA-basemap">
+                    <option value="osm">OpenStreetMap</option>
+                    <option value="arcgis-streets">ArcGIS Streets</option>
+                    <option value="arcgis-earth">ArcGIS Earth</option>
+                    <option value="stamen">Stamen Streets</option>
+                </select>
+                {{ render_map('mapA') }}
+            </div>
+            <div class="split-map">
+                <select class="basemap-select" id="mapB-basemap">
+                    <option value="osm">OpenStreetMap</option>
+                    <option value="arcgis-streets">ArcGIS Streets</option>
+                    <option value="arcgis-earth">ArcGIS Earth</option>
+                    <option value="stamen">Stamen Streets</option>
+                </select>
+                {{ render_map('mapB') }}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

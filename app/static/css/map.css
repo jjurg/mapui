@@ -3,6 +3,46 @@
     height: calc(100vh - 120px); /* Adjust based on your nav/footer height */
 }
 
+.map-wrapper.hidden {
+    display: none;
+}
+
+.map-wrapper.split {
+    display: flex;
+    gap: 10px;
+}
+
+.split-map {
+    flex: 1;
+    position: relative;
+}
+
+.basemap-select {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 5px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.control-button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.control-button:hover {
+    background: #0056b3;
+}
+
 .sidebar {
     width: 300px;
     padding: 20px;
