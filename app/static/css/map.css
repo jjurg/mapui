@@ -31,3 +31,16 @@
 .data-table {
     margin-top: 20px;
 }
+
+.popup-content {
+    padding: 10px;
+    max-width: 200px;
+}
+
+.layer-control-item {
+    margin: 5px 0;
+}
+
+.layer-control-item label {
+    margin-left: 5px;
+}

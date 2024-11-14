@@ -33,16 +33,143 @@ class MapManager {
         }
     }
 
-    loadInitialLayers() {
-        // This will be implemented to load initial GIS layers
+    async loadInitialLayers() {
+        // Load available feature types
+        const featureTypes = ['towers', 'coverage_areas']; // We can make this dynamic later
+        
+        for (const featureType of featureTypes) {
+            try {
+                const response = await fetch(`/api/features/${featureType}`);
+                const features = await response.json();
+                
+                // Add source
+                this.map.addSource(featureType, {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: features
+                    }
+                });
+
+                // Add layer based on feature type
+                if (featureType === 'towers') {
+                    this.addTowerLayer(featureType);
+                } else if (featureType === 'coverage_areas') {
+                    this.addCoverageLayer(featureType);
+                }
+
+                // Add to layer control
+                this.addLayerControl(featureType);
+            } catch (error) {
+                console.error(`Error loading ${featureType}:`, error);
+            }
+        }
+    }
+
+    addTowerLayer(sourceId) {
+        this.map.addLayer({
+            'id': `${sourceId}-layer`,
+            'type': 'circle',
+            'source': sourceId,
+            'paint': {
+                'circle-radius': 6,
+                'circle-color': [
+                    'match',
+                    ['get', 'status'],
+                    'active', '#28a745',
+                    'maintenance', '#ffc107',
+                    '#dc3545' // default color for unknown status
+                ],
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+
+        // Add popup for towers
+        this.addPopup(`${sourceId}-layer`);
+    }
+
+    addCoverageLayer(sourceId) {
+        this.map.addLayer({
+            'id': `${sourceId}-layer`,
+            'type': 'fill',
+            'source': sourceId,
+            'paint': {
+                'fill-color': '#007bff',
+                'fill-opacity': 0.3,
+                'fill-outline-color': '#0056b3'
+            }
+        });
+
+        // Add popup for coverage areas
+        this.addPopup(`${sourceId}-layer`);
+    }
+
+    addPopup(layerId) {
+        // Create popup but don't add to map (it will follow the cursor)
+        const popup = new maplibregl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+        this.map.on('mouseenter', layerId, (e) => {
+            this.map.getCanvas().style.cursor = 'pointer';
+            
+            const coordinates = e.features[0].geometry.type === 'Point' 
+                ? e.features[0].geometry.coordinates.slice()
+                : e.lngLat;
+                
+            const properties = e.features[0].properties;
+            const html = this.createPopupHTML(properties);
+
+            popup.setLngLat(coordinates)
+                .setHTML(html)
+                .addTo(this.map);
+        });
+
+        this.map.on('mouseleave', layerId, () => {
+            this.map.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+    }
+
+    createPopupHTML(properties) {
+        let html = '<div class="popup-content">';
+        for (const [key, value] of Object.entries(properties)) {
+            html += `<strong>${key}:</strong> ${value}<br>`;
+        }
+        html += '</div>';
+        return html;
+    }
+
+    addLayerControl(layerId) {
+        const layerList = document.querySelector('.layer-list');
+        if (!layerList) return;
+
+        const div = document.createElement('div');
+        div.className = 'layer-control-item';
+        
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.id = `toggle-${layerId}`;
+        input.checked = true;
+
+        const label = document.createElement('label');
+        label.htmlFor = `toggle-${layerId}`;
+        label.textContent = layerId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+        div.appendChild(input);
+        div.appendChild(label);
+        layerList.appendChild(div);
+
+        input.addEventListener('change', (e) => {
+            const visibility = e.target.checked ? 'visible' : 'none';
+            this.map.setLayoutProperty(`${layerId}-layer`, 'visibility', visibility);
+        });
     }
 
     changeBasemap(style) {
         // This will be implemented to switch basemap styles
-    }
-
-    addLayer(layerId, source, type, paint) {
-        // This will be implemented to add new layers
     }
 }
 
