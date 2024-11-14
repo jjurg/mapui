@@ -1,0 +1,31 @@
+<!-- templates/split_view.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Split View - Geo Data Visualization</title>
+    <link href='https://unpkg.com/maplibre-gl@3.x/dist/maplibre-gl.css' rel='stylesheet' />
+    <script src='https://unpkg.com/maplibre-gl@3.x/dist/maplibre-gl.js'></script>
+    <style>
+        .map-container { display: flex; height: 100vh; }
+        .map { flex: 1; }
+        .control-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container">
+        <div id="map1" class="map"></div>
+        <div id="map2" class="map"></div>
+    </div>
+    <div class="control-panel">
+        <!-- Add control elements here -->
+    </div>
+    <script src="/static/js/split_view.js"></script>
+</body>
+</html>
